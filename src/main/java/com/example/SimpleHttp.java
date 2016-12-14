@@ -2,6 +2,7 @@ package com.example;
 
 import com.example.models.User;
 import com.google.gson.Gson;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -29,6 +30,7 @@ public class SimpleHttp {
     public void tearDown() throws IOException {
         httpClient.close();
     }
+
     @Test
     public void getUserById() throws IOException {
         int userId = 1;
@@ -36,9 +38,17 @@ public class SimpleHttp {
 
         HttpGet httpGet = new HttpGet(url);
         CloseableHttpResponse response = httpClient.execute(httpGet);
-        int code = response.getStatusLine().getStatusCode();
-        assertEquals(code, 200, "Users list are empty!");
-
+       // int code = response.getStatusLine().getStatusCode();
+       // assertEquals(code, 200, "Users list are empty!");
+        try {
+            System.out.println(response.getStatusLine());
+            HttpEntity entity1 = response.getEntity();
+            // do something useful with the response body
+            // and ensure it is fully consumed
+            EntityUtils.consume(entity1);
+        } finally {
+            response.close();
+        }
     }
 
     @Test
@@ -50,6 +60,7 @@ public class SimpleHttp {
         System.out.println(EntityUtils.toString(response.getEntity()));
         assertEquals(code, 200, "Wrong response");
     }
+
     @Test
     public void getCommentById() throws IOException {
         int id=2;
@@ -62,19 +73,42 @@ public class SimpleHttp {
     }
 
     @Test
-    public void getUserByIdWithModel() throws IOException {
-        int userId = 1;
-        String url = "http://localhost:3000/users/" + userId;
-
+    public void getPosts() throws IOException {
+        String url = "http://localhost:3000/posts";
         HttpGet httpGet = new HttpGet(url);
         CloseableHttpResponse response = httpClient.execute(httpGet);
-        String responcebody = EntityUtils.toString(response.getEntity());
+        int code = response.getStatusLine().getStatusCode();
+        System.out.println(EntityUtils.toString(response.getEntity()));
+        assertEquals(code, 200, "Wrong response");
+    }
+    @Test
+    public void getPostsById() throws IOException {
+        int id=5;
+        String url = "http://localhost:3000/posts/" + id;
+        HttpGet httpGet = new HttpGet(url);
+        CloseableHttpResponse response = httpClient.execute(httpGet);
+        int code = response.getStatusLine().getStatusCode();
+        System.out.println(EntityUtils.toString(response.getEntity()));
+        assertEquals(code, 200, "Wrong response");
 
-        Gson gson = new Gson();
-        User user = gson.fromJson(responcebody, User.class);
-
-        assertEquals(user.getName(),"Leanne Graham");
-        assertEquals(user.getUsername(),"Bret");
-        assertEquals(user.getEmail(),"Sincere@april.biz");
+    }
+    @Test
+    public void getAlbums() throws IOException {
+        String url = "http://localhost:3000/albums";
+        HttpGet httpGet = new HttpGet(url);
+        CloseableHttpResponse response = httpClient.execute(httpGet);
+        int code = response.getStatusLine().getStatusCode();
+        System.out.println(EntityUtils.toString(response.getEntity()));
+        assertEquals(code, 200, "Wrong response");
+    }
+    @Test
+    public void getAlbumsById() throws IOException {
+        int id=5;
+        String url = "http://localhost:3000/albums/" + id;
+        HttpGet httpGet = new HttpGet(url);
+        CloseableHttpResponse response = httpClient.execute(httpGet);
+        int code = response.getStatusLine().getStatusCode();
+        System.out.println(EntityUtils.toString(response.getEntity()));
+        assertEquals(code, 200, "Wrong response");
     }
 }
